@@ -9,7 +9,6 @@ const generateRandomString = () => {
   for (let i = 0; i < 6; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-
   return result;
 };
 
@@ -23,12 +22,16 @@ const urlDatabase = {
 
 
 // ------------------------- MIDDLEWARE
+
 app.use(express.urlencoded({ extended: true }));
 
 
 //--------------------------GET REQUESTS
 
-
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
+});
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
@@ -44,22 +47,20 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body> Hello <b>World</b></body></html>\n");
-});
+// -------------------------POST REQUESTS
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`);
 });
+
 
 
 // -------------------------- LISTENER
