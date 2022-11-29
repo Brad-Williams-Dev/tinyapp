@@ -18,5 +18,22 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
+    
+    
+      <% if(username){ %>
+        <form method="POST" action="/logout">
+        <label style="padding-right:25px; color: white; font-size:large;">Logged in as: <%= username %>  </label>
+        <button type="submit" style="color: rgb(20, 89, 225); background-color: white; border-radius: 6px; border: 1px solid rgb(20, 89, 225); padding: 4px 8px">Logout</button>
+      </form>
+      <% }else{ %>  
+        <form method="POST" action="/login" >
+        <input type="text" for="username" name="username" placeholder="username">
+        <button type="submit" style="color: rgb(20, 89, 225); background-color: white; border-radius: 6px; border: 1px solid rgb(20, 89, 225); padding: 5px 10px">Login</button>
+      </form>
+     <% } %>
+     
+   
+    
+
   </nav>
 </header>
