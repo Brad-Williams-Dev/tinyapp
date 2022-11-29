@@ -1,7 +1,10 @@
+
+// --------------------- REQUIREMENTS
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
+// Generates a random 6 character string used as shortURLS
 
 const generateRandomString = () => {
   let result = '';
