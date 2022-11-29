@@ -8,7 +8,7 @@ const PORT = 8080; // default port 8080
 
 const generateRandomString = () => {
   let result = '';
-  const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   for (let i = 0; i < 6; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
@@ -56,6 +56,11 @@ app.get("/urls.json", (req, res) => {
 });
 
 // -------------------------POST REQUESTS
+
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+});
 
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
