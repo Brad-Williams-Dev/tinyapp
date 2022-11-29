@@ -63,9 +63,11 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect('/urls');
 });
 
-// -------EDIT BUTTON POST REQUEST ------
-app.get("/urls/:id/update", (req, res) => {
-
+// -------EDIT BUTTON POST REQUEST ---------
+app.post("/urls/:id/edit", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = req.body.updatedLongURL;
+  urlDatabase[shortURL] = longURL;
   res.redirect('/urls');
 });
 

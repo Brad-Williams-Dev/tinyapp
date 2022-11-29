@@ -18,6 +18,11 @@
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
+          <div>
+            <form method="get" action="/urls">
+              <button type="submit" style="color: white; background-color: rgb(20, 89, 225); border-radius: 6px; border: 1px solid blue; padding: 10px 20px;" >Finished</button>
+            </form>
+          </div>
         </p>
       </div>
       <div class="card-footer text-muted">
