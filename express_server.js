@@ -31,7 +31,6 @@ const userLookup = (email) => {
   return null;
 };
 
-
 app.set("view engine", "ejs");
 
 // URL DATABASE
@@ -75,6 +74,12 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+// LOGIN PAGE GET REQUEST
+app.get("/login", (req, res) => {
+
+  res.render("urls_login");
+});
+
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: users, cookie: req.cookies['user_id'] };
   res.render("urls_show", templateVars);
@@ -103,18 +108,22 @@ app.post("/urls/:id/edit", (req, res) => {
 
 // -------- LOGIN BUTTON POST REQUEST -------
 app.post("/login", (req, res) => {
-  //res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  res.redirect("/login");
+});
+
+// ------- REGISTER BUTTON POST REQUEST----
+app.post('/register', (req, res) => {
+  res.redirect('/register');
 });
 
 // --------- LOGOUT BUTTON POST REQUEST -----
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 // -------USER REGISTRATION POST REQUEST
-app.post("/register", (req, res) => {
+app.post("/newAccount", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const userID = generateRandomString();
@@ -131,8 +140,6 @@ app.post("/register", (req, res) => {
   res.cookie("user_id", userID);
   res.redirect('/urls');
 
-  console.log(userLookup(email));
-  console.log(users);
 });
 
 app.post("/urls/:id/update", (req, res) => {
