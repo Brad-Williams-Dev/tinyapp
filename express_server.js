@@ -120,11 +120,11 @@ app.post("/register", (req, res) => {
   const userID = generateRandomString();
 
   if (email.length === 0 || password.length === 0) {
-    res.sendStatus(400);
+    res.status(400).send('Invalid credentials');
   }
 
   if (userLookup(email) !== null) {
-    res.sendStatus(400);
+    res.status(400).send('Invalid credentials');
   }
 
   users[userID] = { id: userID, email, password };
