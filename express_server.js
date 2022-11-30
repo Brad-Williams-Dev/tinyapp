@@ -25,7 +25,7 @@ const users = {
 const userLookup = (email) => {
   for (const item in users) {
     if (users[item].email === email) {
-      return users[item].email;
+      return item;
     }
   }
   return null;
@@ -45,7 +45,8 @@ const urlDatabase = {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
 
 //--------------------------GET REQUESTS
 
@@ -108,7 +109,21 @@ app.post("/urls/:id/edit", (req, res) => {
 
 // -------- LOGIN BUTTON POST REQUEST -------
 app.post("/login", (req, res) => {
-  res.redirect("/login");
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = userLookup(email);
+
+  if (email.length === 0 || password.length === 0) {
+    res.status(400).send('Invalid credentials');
+  }
+  if (users[user].password === password && users[user].email === email) {
+    res.cookie("user_id", user);
+    res.redirect('/urls');
+  } else if (users[user].password !== password) {
+    res.status(403).send("Invalid credentials");
+  }
+
+
 });
 
 // ------- REGISTER BUTTON POST REQUEST----

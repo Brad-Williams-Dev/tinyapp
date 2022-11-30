@@ -16,21 +16,24 @@
     </style>
   </head>
   <body>
+    
     <form method="POST" action="/login">
-        <h1>TinyApp</h1>
-        <h2>Please login</h2>
+      <img src="images/logo.png" alt="">
       <div>
         <label style="font-size:30px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Email :</label>
         <input type="email" name="email" id="">
       </div>
       <div>
         <label style="font-size:30px; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Password :</label>
-        <input type="password" name="email" id="">
+        <input type="password" name="password" id="">
       </div>
       <br>
       <button>Login</button>
-      <form method="POST" action="/register">
-      <button>Register</button>
-    </form>
+      </form>
+      <div>
+        <form action="/register" method="get">
+          <button>Register</button>
+        </form>
+      </div>
   </body>
 </html>
