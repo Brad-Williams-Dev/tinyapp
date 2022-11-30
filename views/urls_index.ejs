@@ -33,7 +33,7 @@
           <% for (let id in urls) { %>
             <tr>
               <td><%= id %></td>
-              <td><%= urls[id] %></td>
+              <td><%= urls[id].longURL %></td>
               <!-- EDIT BUTTON AND POST REQUEST -->
               <form method="GET" action="/urls/<%= id %>" >
                 <td><button type="submit" style="color: rgb(20, 89, 225); background-color: white; border-radius: 6px; border: 1px solid rgb(20, 89, 225); padding: 5px 10px;">Edit</button></td>
