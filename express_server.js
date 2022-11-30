@@ -16,13 +16,30 @@ const generateRandomString = () => {
   return result;
 };
 
+// USERS DATABASE
+
+const users = {
+
+};
+
+const userLookup = (email) => {
+  for (const item in users) {
+    if (users[item].email === email) {
+      return users[item].email;
+    }
+  }
+  return null;
+};
+
 
 app.set("view engine", "ejs");
 
+// URL DATABASE
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
 
 
 // ------------------------- MIDDLEWARE
@@ -41,24 +58,25 @@ app.get("/u/:id", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"],
+    user: users,
+    cookie: req.cookies['user_id']
   };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const templateVars = { urls: urlDatabase, user: users, cookie: req.cookies['user_id'] };
   res.render("urls_index", templateVars);
 });
 
 // RESISTER FORM GET REQUEST
 app.get("/register", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const templateVars = { urls: urlDatabase, user: users, cookie: req.cookies['user_id'] };
   res.render("urls_register", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: users, cookie: req.cookies['user_id'] };
   res.render("urls_show", templateVars);
 });
 
@@ -85,14 +103,36 @@ app.post("/urls/:id/edit", (req, res) => {
 
 // -------- LOGIN BUTTON POST REQUEST -------
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  //res.cookie("username", req.body.username);
   res.redirect("/urls");
 });
 
 // --------- LOGOUT BUTTON POST REQUEST -----
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/urls");
+});
+
+// -------USER REGISTRATION POST REQUEST
+app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const userID = generateRandomString();
+
+  if (email.length === 0 || password.length === 0) {
+    res.sendStatus(400);
+  }
+
+  if (userLookup(email) !== null) {
+    res.sendStatus(400);
+  }
+
+  users[userID] = { id: userID, email, password };
+  res.cookie("user_id", userID);
+  res.redirect('/urls');
+
+  console.log(userLookup(email));
+  console.log(users);
 });
 
 app.post("/urls/:id/update", (req, res) => {
