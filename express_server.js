@@ -51,6 +51,12 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// RESISTER FORM GET REQUEST
+app.get("/register", (req, res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  res.render("urls_register", templateVars);
+});
+
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
   res.render("urls_show", templateVars);
