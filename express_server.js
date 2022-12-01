@@ -24,6 +24,12 @@ const users = {
 
 };
 
+// URL DATABASE
+const urlDatabase = {
+
+};
+
+// CHECKS FOR URLS BELONGING ONLY TO LOGGED IN USER
 const urlsForUser = (id) => {
   let usersURLS = {};
   for (const item in urlDatabase) {
@@ -34,16 +40,7 @@ const urlsForUser = (id) => {
   return usersURLS;
 };
 
-
-
 app.set("view engine", "ejs");
-
-// URL DATABASE
-const urlDatabase = {
-
-};
-
-
 
 // ------------------------- MIDDLEWARE
 
