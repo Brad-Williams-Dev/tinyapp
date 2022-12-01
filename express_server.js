@@ -3,6 +3,7 @@
 const express = require("express");
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
+const { userLookup } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -33,14 +34,7 @@ const urlsForUser = (id) => {
   return usersURLS;
 };
 
-const userLookup = (email) => {
-  for (const item in users) {
-    if (users[item].email === email) {
-      return item;
-    }
-  }
-  return null;
-};
+
 
 app.set("view engine", "ejs");
 
@@ -91,13 +85,16 @@ app.get("/urls", (req, res) => {
 // RESISTER FORM GET REQUEST
 app.get("/register", (req, res) => {
   const templateVars = { urls: urlDatabase, user: users, cookie: req.session.user_id };
+
   res.render("urls_register", templateVars);
+
 });
 
 // LOGIN PAGE GET REQUEST
 app.get("/login", (req, res) => {
 
   res.render("urls_login");
+
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -123,32 +120,29 @@ app.get("/urls.json", (req, res) => {
 // -------DELETE BUTTON POST REQUEST ------
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
-  const updatedLongURL = req.body.updatedLongURL;
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id].longURL, user: users, cookie: req.session.user_id };
-  if (req.session.user_id !== urlDatabase[shortURL].userID) {
-    res.status(400).send("You do not have permission to edit this entry");
+  //const templateVars = { id: req.params.id, user: users, cookie: req.session.user_id };
+  if (req.session.user_id === urlDatabase[shortURL].userID) {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
   }
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
 });
 
 app.get("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
-  const updatedLongURL = req.body.updatedLongURL;
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id].longURL, user: users, cookie: req.session.user_id };
   if (req.session.user_id !== urlDatabase[shortURL].userID) {
     res.status(400).send("You do not have permission to delete this entry");
+    res.redirect("/urls");
   }
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
 });
+
+
 
 // -------EDIT BUTTON POST REQUEST ---------
 app.post("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   const updatedLongURL = req.body.updatedLongURL;
   if (req.session.user_id !== urlDatabase[id].userID) {
-    res.status(400).send("You do not have permission to delete this entry");
+    res.status(400).send("You do not have permission to edit this entry");
   }
   urlDatabase[shortURL].longURL = updatedLongURL;
   res.redirect('/urls');
@@ -160,7 +154,7 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = userLookup(email);
+  const user = userLookup(email, users);
   const result = bcrypt.compareSync(password, users[user].password);
 
   if (result === true && users[user].email === email) {
@@ -196,14 +190,12 @@ app.post("/newAccount", (req, res) => {
     res.status(400).send('Invalid credentials');
   }
 
-  if (userLookup(email) !== null) {
-    res.status(400).send('Invalid credentials');
+  if (userLookup(email, users) !== undefined) {
+    res.status(400).send('Email is already in use');
   }
-
   users[userID] = { id: userID, email, password: hashedPassword };
   req.session.user_id = userID;
   res.redirect('/urls');
-  console.log(users);
 });
 
 app.post("/urls/:id/update", (req, res) => {
