@@ -102,7 +102,7 @@ app.get("/urls/:id", (req, res) => {
   const updatedLongURL = req.body.updatedLongURL;
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id].longURL, user: users, cookie: req.cookies['user_id'], urls: newData };
 
-  if (req.cookies['user_id'] !== urlDatabase[shortURL].userID) {
+  if (req.cookies['user_id'] !== urlDatabase[shortURL].userID || req.cookies['user_id'] === undefined) {
     res.status(400).send("You do not have permission to edit this entry");
   } else {
     res.render("urls_show", templateVars);
@@ -212,8 +212,16 @@ app.post("/urls", (req, res) => {
   req.cookies;
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = { longURL: longURL, userID: req.cookies['user_id'] };
-  res.redirect(`/urls/${shortURL}`);
+
+  if (req.cookies['user_id'] === undefined) {
+    res.redirect('/login');
+  } else if (req.cookies['user_id']) {
+    urlDatabase[shortURL] = { longURL: longURL, userID: req.cookies['user_id'], time: Date() };
+    res.redirect(`/urls/${shortURL}`);
+  }
+
+
+
 });
 
 
