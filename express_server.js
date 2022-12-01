@@ -151,7 +151,16 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+
+  if (password === '' || email === '') {
+    res.status(403).send("Fields cannot be left blank");
+  }
+
   const user = userLookup(email, users);
+  if (user === undefined) {
+    res.status(403).send("Email or Password is invalid");
+  }
+
   const result = bcrypt.compareSync(password, users[user].password);
 
   if (result === true && users[user].email === email) {
@@ -159,8 +168,6 @@ app.post("/login", (req, res) => {
     res.redirect('/urls');
   } else if (result === false || users[user].email !== email) {
     res.status(403).send("Email or Password is invalid");
-  } else if (password === undefined || email === undefined) {
-    res.status(403).send("Invalid credentials");
   }
 
 });
