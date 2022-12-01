@@ -2,6 +2,7 @@
 // --------------------- REQUIREMENTS
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -157,16 +158,16 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user = userLookup(email);
+  const result = bcrypt.compareSync(password, users[user].password);
 
-  if (users[user].password === password && users[user].email === email) {
+  if (result === true && users[user].email === email) {
     res.cookie("user_id", user);
     res.redirect('/urls');
-  } else if (users[user].password !== password || users[user].email === email) {
+  } else if (result === false || users[user].email !== email) {
     res.status(403).send("Email or Password is invalid");
   } else if (password === undefined || email === undefined) {
     res.status(403).send("Invalid credentials");
   }
-
 
 });
 
@@ -185,6 +186,7 @@ app.post("/logout", (req, res) => {
 app.post("/newAccount", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const userID = generateRandomString();
 
   if (email.length === 0 || password.length === 0) {
@@ -195,10 +197,10 @@ app.post("/newAccount", (req, res) => {
     res.status(400).send('Invalid credentials');
   }
 
-  users[userID] = { id: userID, email, password };
+  users[userID] = { id: userID, email, password: hashedPassword };
   res.cookie("user_id", userID);
   res.redirect('/urls');
-
+  console.log(users);
 });
 
 app.post("/urls/:id/update", (req, res) => {
